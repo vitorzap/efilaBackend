@@ -31,6 +31,10 @@
     "sucrase": "^3.10.1",
     "sucrose": "^0.8.2"
   },
+  "engines": {
+    "node": "10.16.0", 
+    "yarn": "1.16.0"
+  },
   "description": "Controle automatixado de filas",
-  "author": "Andre/Guilherme/Vitor"
+  "author": "Vitor"
 }
