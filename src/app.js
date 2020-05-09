@@ -1,16 +1,20 @@
 // import 'dotenv/config';
 
-import express from 'express';
-import cors from 'cors';
+// import express from 'express';
+const express = require('express');
+// import cors from 'cors';
+const cors = require('cors');
 // import path from 'path';
 // import Youch from 'youch';
 // import * as Sentry from '@sentry/node';
 // import 'express-async-errors';
 
-import routes from './routes';
+// import routes from './routes';
+const routes = require('./routes');
 // import sentryConfig from './config/sentry';
 
-import './database';
+// import './database';
+require('./database');
 
 class App {
   constructor() {
@@ -51,4 +55,5 @@ class App {
   // }
 }
 
-export default new App().server;
+// export default new App().server;
+module.exports = new App().server;

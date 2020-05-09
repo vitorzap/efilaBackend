@@ -1,10 +1,11 @@
-import jwt from 'jsonwebtoken';
-import * as Yup from 'yup';
+// import * as Yup from 'yup';
+const Yup = require('yup');
+const jwt = require('jsonwebtoken');
 
-import User from '../models/User';
-import Company from '../models/Company';
-import authConfig from '../../config/auth';
-import Constants from '../constants';
+const User = require('../models/User');
+const Company = require('../models/Company');
+const authConfig = require('../../config/auth');
+const Constants = require('../constants');
 
 class SessionController {
   async login(req, res) {
@@ -168,4 +169,5 @@ class SessionController {
   }
 }
 
-export default new SessionController();
+// export default new SessionController();
+module.exports = new SessionController();

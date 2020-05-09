@@ -1,4 +1,5 @@
-import app from './app';
+const app = require('./app');
+// import app from './app';
 
 console.log('SERVER <=====================');
 

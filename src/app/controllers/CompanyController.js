@@ -1,8 +1,9 @@
-import * as Yup from 'yup';
-import Company from '../models/Company';
-import User from '../models/User';
-import QueueType from '../models/QueueType';
-import Constants from '../constants';
+// import * as Yup from 'yup';
+const Yup = require('yup');
+const Company = require('../models/Company');
+const User = require('../models/User');
+const QueueType = require('../models/QueueType');
+const Constants = require('../constants');
 
 class CompanyController {
   async index(req, res) {
@@ -182,4 +183,5 @@ class CompanyController {
   }
 }
 
-export default new CompanyController();
+// export default new CompanyController();
+module.exports = new CompanyController();

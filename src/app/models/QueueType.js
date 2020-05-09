@@ -1,4 +1,6 @@
-import Sequelize, { Model } from 'sequelize';
+// import Sequelize, { Model } from 'sequelize';
+const Sequelize = require('sequelize');
+const { Model } = require('sequelize');
 
 class QueueType extends Model {
   static init(sequelize) {
@@ -19,4 +21,5 @@ class QueueType extends Model {
   }
 }
 
-export default QueueType;
+// export default QueueType;
+module.exports = QueueType;

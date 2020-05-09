@@ -1,7 +1,8 @@
-import * as Yup from 'yup';
-import User from '../models/User';
-import Company from '../models/Company';
-import Constants from '../constants';
+// import * as Yup from 'yup';
+const Yup = require('yup');
+const User = require('../models/User');
+const Company = require('../models/Company');
+const Constants = require('../constants');
 
 class UserController {
   async index(req, res) {
@@ -202,4 +203,5 @@ class UserController {
   }
 }
 
-export default new UserController();
+// export default new UserController();
+module.exports = new UserController();

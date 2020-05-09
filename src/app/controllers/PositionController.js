@@ -1,12 +1,13 @@
-import * as Yup from 'yup';
-import { Op } from 'sequelize';
-import { startOfHour, parseISO } from 'date-fns';
-import Position from '../models/Position';
-import Company from '../models/Company';
-import Queue from '../models/Queue';
+// const * as Yup from 'yup';
+const Yup = require('yup');
+const { Op } = require('sequelize');
+const { startOfHour, parseISO } = require('date-fns');
+const Position = require('../models/Position');
+const Company = require('../models/Company');
+const Queue = require('../models/Queue');
 // import { startOfHour, parseISO, isBefore, format, subHours } from 'date-fns';
 
-import Constants from '../constants';
+const Constants = require('../constants');
 
 class PositionController {
   async index(req, res) {
@@ -251,4 +252,5 @@ class PositionController {
   }
 }
 
-export default new PositionController();
+// export default new PositionController();
+module.exports = new PositionController();

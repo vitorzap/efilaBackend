@@ -1,12 +1,11 @@
-import Sequelize from 'sequelize';
+const Sequelize = require('sequelize');
+const Company = require('../app/models/Company');
+const User = require('../app/models/User');
+const QueueType = require('../app/models/QueueType');
+const Queue = require('../app/models/Queue');
+const Position = require('../app/models/Position');
 
-import Company from '../app/models/Company';
-import User from '../app/models/User';
-import QueueType from '../app/models/QueueType';
-import Queue from '../app/models/Queue';
-import Position from '../app/models/Position';
-
-import databaseConfig from '../config/database';
+const databaseConfig = require('../config/database');
 
 const models = [Company, User, QueueType, Queue, Position];
 
@@ -23,4 +22,5 @@ class Database {
   }
 }
 
-export default new Database();
+// export default new Database()
+module.exports = new Database();

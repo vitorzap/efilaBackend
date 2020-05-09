@@ -1,8 +1,9 @@
-import * as Yup from 'yup';
-import Queue from '../models/Queue';
-import QueueType from '../models/QueueType';
-import Company from '../models/Company';
-import Constants from '../constants';
+// import * as Yup from 'yup';
+const Yup = require('yup');
+const Queue = require('../models/Queue');
+const QueueType = require('../models/QueueType');
+const Company = require('../models/Company');
+const Constants = require('../constants');
 
 class QueueController {
   async index(req, res) {
@@ -193,4 +194,5 @@ class QueueController {
   }
 }
 
-export default new QueueController();
+// export default new QueueController();
+module.exports = new QueueController();
