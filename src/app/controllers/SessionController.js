@@ -9,6 +9,7 @@ const Constants = require('../constants');
 
 class SessionController {
   async login(req, res) {
+    console.log('LOGIN-01 <=======');
     const schema = Yup.object().shape({
       email: Yup.string()
         .email()
