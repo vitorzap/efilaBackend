@@ -3,10 +3,10 @@ module.exports = {
   dialectOptions: {
     ssl: true
   },
-  host: 'ec2-54-217-204-34.eu-west-1.compute.amazonaws.com',
-  username: 'msxkivqjdxdbao',
-  password: 'dd9d8af288ea982cc3d2a67dc8018e07fee4426ae0f095944af127eddf7e8b0f',
-  database: 'd81sm4vf6l7fc1',
+  host: 'ec2-54-81-37-115.compute-1.amazonaws.com',
+  username: 'sgtxzajrpgjyth',
+  password: '8418add9f25f9b5218f59782bfe3be3be5925624a588caa7a4af8676d3c75ac7',
+  database: 'db7isbfgi7h2in',
   define: {
     timestamp: true,
     underscored: true,
