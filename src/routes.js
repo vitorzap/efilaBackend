@@ -15,8 +15,7 @@ const routes = new Router();
 console.log('ROUTES <=====================');
 
 // Session
-routes.post('/ping', SessionController.ping);
-routes.post('/login', SessionController.login);
+routes.post('/enter', SessionController.login);
 console.log('ROUTES2 <=====================');
 
 // Verifica autenticacáo
