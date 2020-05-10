@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
   const headerAuthorization = req.headers.authorization;
 
   if (!headerAuthorization)
-    return res.status(401).json({ error: 'Token not provided' });
+    return res.status(401).json({ error: 'Token não informado' });
 
   const [, token] = headerAuthorization.split(' ');
 

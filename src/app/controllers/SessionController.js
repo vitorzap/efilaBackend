@@ -8,6 +8,16 @@ const authConfig = require('../../config/auth');
 const Constants = require('../constants');
 
 class SessionController {
+  async ping(req, res) {
+    console.log('PING-01 <=======');
+    return res.json({
+      Hello: {
+        id: 'eFila',
+        msg: 'Ready to work'
+      }
+    });
+  }
+
   async login(req, res) {
     console.log('LOGIN-01 <=======');
     const schema = Yup.object().shape({

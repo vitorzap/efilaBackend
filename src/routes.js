@@ -1,18 +1,3 @@
-// import { Router } from 'express';
-// import multer from 'multer';
-// import multerConfig from './config/multer';
-
-// import UserController from './app/controllers/UserController';
-// import CompanyController from './app/controllers/CompanyController';
-// import QueueTypeController from './app/controllers/QueueTypeController';
-// import QueueController from './app/controllers/QueueController';
-// import SessionController from './app/controllers/SessionController';
-// import PositionController from './app/controllers/PositionController';
-
-// import authMiddleware from './app/middleware/auth';
-// import isRootOrAdminMiddleware from './app/middleware/isRootOrAdmin';
-// import isRootMiddleware from './app/middleware/isRoot';
-
 const { Router } = require('express');
 const UserController = require('./app/controllers/UserController');
 const CompanyController = require('./app/controllers/CompanyController');
@@ -30,12 +15,14 @@ const routes = new Router();
 console.log('ROUTES <=====================');
 
 // Session
+routes.post('/ping', SessionController.ping);
 routes.post('/login', SessionController.login);
+console.log('ROUTES2 <=====================');
 
 // Verifica autenticacáo
-routes.use(authMiddleware);
+// routes.use(authMiddleware);
 // Verifica se é administrador ou root
-routes.use(isRootOrAdminMiddleware);
+// routes.use(isRootOrAdminMiddleware);
 // Change company
 routes.put('/change', SessionController.change);
 
@@ -64,7 +51,7 @@ routes.delete('/positions/:id', PositionController.delete);
 routes.get('/companies', CompanyController.index);
 routes.get('/listcompanies', CompanyController.listcompanies);
 // Verifica se é root
-routes.use(isRootMiddleware);
+// routes.use(isRootMiddleware);
 //
 routes.get('/companies/:id', CompanyController.getOne);
 routes.post('/companies', CompanyController.store);
