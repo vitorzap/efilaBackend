@@ -3,8 +3,8 @@ const app = require('./app');
 
 console.log('SERVER <=====================');
 
-// const port = process.env.PORT || 3333;
-const port = 8080;
+const port = process.env.PORT || 3333;
+// const port = 8080;
 
 console.log('SERVER PORT = ', port);
 
