@@ -3,4 +3,8 @@ const app = require('./app');
 
 console.log('SERVER <=====================');
 
-app.listen(3333);
+const port = process.env.PORT || 3333;
+
+console.log('SERVER PORT = ', port);
+
+app.listen(port);
