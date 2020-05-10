@@ -14,13 +14,15 @@ class Database {
     this.init();
   }
 
-  init() {
+  async init() {
     console.log('Conectando');
     this.connection = new Sequelize(databaseConfig);
     models
       .map(model => model.init(this.connection))
       .map(model => model.associate && model.associate(this.connection.models));
     console.log('Conectado');
+    const user = await User.findByPk(2);
+    console.log(user.name);
   }
 }
 
