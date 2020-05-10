@@ -23,7 +23,9 @@ class CompanyController {
       });
       companies.perpage = Constants.ROWS_PER_PAGE;
     } else {
-      companies = await Company.findByPk(req.loggedUserCompanyId);
+      console.log('Consultado user 2');
+      companies = await Company.findByPk(2);
+      // companies = await Company.findByPk(req.loggedUserCompanyId);
     }
 
     return res.json(companies);
