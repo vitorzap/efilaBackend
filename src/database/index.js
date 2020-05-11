@@ -10,7 +10,7 @@ const QueueType = require('../app/models/QueueType');
 const Queue = require('../app/models/Queue');
 const Position = require('../app/models/Position');
 
-const databaseConfig = require('../config/databaselocal');
+const databaseConfig = require('../config/database');
 const localDatabaseConfig = require('../config/databaselocal');
 
 const models = [Company, User, QueueType, Queue, Position];
