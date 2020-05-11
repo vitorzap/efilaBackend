@@ -1,4 +1,14 @@
 const Sequelize = require('sequelize');
+
+const { Client } = require('pg');
+
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+
+console.log('client.DATABASE_URL', client.DATABASE_URL);
+
 const Company = require('../app/models/Company');
 const User = require('../app/models/User');
 const QueueType = require('../app/models/QueueType');
