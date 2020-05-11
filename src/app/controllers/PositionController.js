@@ -11,11 +11,6 @@ const Constants = require('../constants');
 
 class PositionController {
   async index(req, res) {
-    console.log('POSITIONS - controller');
-    console.log(`2-UserId=${req.loggedUserId}`);
-    console.log(`2-UserType=${req.loggedUserType}`);
-    console.log(`2-UserCompanyId=${req.loggedUserCompanyId}`);
-    console.log('-----------------------------------');
     const { queue_id: queueId } = req.body;
     let positions;
     if (req.loggedUserType === Constants.USER_ROOT) {
@@ -64,8 +59,6 @@ class PositionController {
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Validation failed' });
 
-    console.log(req.body);
-
     const {
       arrived_at: arrivedAt,
       name,
@@ -96,14 +89,11 @@ class PositionController {
         [Op.or]: [{ name }, { phone }, { email }]
       }
     });
-    console.log('1-Passou');
 
     if (PositionAlreadyExists)
       return res
         .status(400)
         .json({ error: 'This position seems to already exist.' });
-
-    console.log('2-Passou');
 
     if (parseISO(arrivedAt) === 'Invalid Date') {
       return res.status(400).json({ error: 'Data em formato invalido' });
@@ -127,7 +117,6 @@ class PositionController {
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Validation failed' });
 
-    console.log(req.body);
     const {
       arrived_at: newArrivedAt,
       name: newName,

@@ -12,16 +12,15 @@ const isRootMiddleware = require('./app/middleware/isRoot');
 
 const routes = new Router();
 // const upload = multer(multerConfig);
-console.log('ROUTES <=====================');
 
 // Session
-routes.post('/enter', SessionController.login);
-console.log('ROUTES2 <=====================');
+routes.get('/ping', SessionController.ping);
+routes.post('/login', SessionController.login);
 
 // Verifica autenticacáo
-// routes.use(authMiddleware);
+routes.use(authMiddleware);
 // Verifica se é administrador ou root
-// routes.use(isRootOrAdminMiddleware);
+routes.use(isRootOrAdminMiddleware);
 // Change company
 routes.put('/change', SessionController.change);
 
@@ -50,7 +49,7 @@ routes.delete('/positions/:id', PositionController.delete);
 routes.get('/companies', CompanyController.index);
 routes.get('/listcompanies', CompanyController.listcompanies);
 // Verifica se é root
-// routes.use(isRootMiddleware);
+routes.use(isRootMiddleware);
 //
 routes.get('/companies/:id', CompanyController.getOne);
 routes.post('/companies', CompanyController.store);

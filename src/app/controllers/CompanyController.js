@@ -8,13 +8,7 @@ const Constants = require('../constants');
 class CompanyController {
   async index(req, res) {
     let companies;
-    console.log(`req.loggedUserType=${req.loggedUserType}`);
-    console.log(`req.loggedUserCompanyId=${req.loggedUserCompanyId}`);
-    console.log(`req.lquery=${req.loggedUserCompanyId}`);
-    console.log(`req.Query=${JSON.stringify(req.query)}`);
     const { page = 1, sort = 'name' } = req.query;
-    console.log(`page=${page}`);
-    console.log(`sort=${sort}`);
     if (req.loggedUserType === Constants.USER_ROOT) {
       companies = await Company.findAndCountAll({
         order: [sort || 'name'],
@@ -23,9 +17,7 @@ class CompanyController {
       });
       companies.perpage = Constants.ROWS_PER_PAGE;
     } else {
-      console.log('Consultado user 2');
-      companies = await Company.findByPk(2);
-      // companies = await Company.findByPk(req.loggedUserCompanyId);
+      companies = await Company.findByPk(req.loggedUserCompanyId);
     }
 
     return res.json(companies);
@@ -71,7 +63,6 @@ class CompanyController {
 
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Dados invalidos' });
-    console.log(req.body.email);
 
     const companyWithSameEmailExists = await Company.findOne({
       where: { email: req.body.email }
@@ -111,9 +102,6 @@ class CompanyController {
       return res.status(400).json({ error: 'Dados invalidos' });
 
     const { email: newEmail, is_root: newIsRoot } = req.body;
-    console.log(`newIsRoot=${newIsRoot}`);
-    console.log(`newEmail=${newEmail}`);
-    console.log(req.body);
 
     const company = await Company.findByPk(req.params.id);
     if (!company) {
@@ -166,13 +154,11 @@ class CompanyController {
     const user = await User.findOne({
       where: { company_id: req.params.id }
     });
-    console.log(user);
     if (user) {
       return res
         .status(400)
         .json({ error: 'Existe pelo menos um usuário ligado a esta empresa.' });
     }
-    console.log('vai deletar <<========');
     const { id, name, email, is_root: isRoot } = company;
     await company.destroy();
 

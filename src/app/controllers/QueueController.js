@@ -7,10 +7,6 @@ const Constants = require('../constants');
 
 class QueueController {
   async index(req, res) {
-    console.log(`2-UserId=${req.loggedUserId}`);
-    console.log(`2-UserType=${req.loggedUserType}`);
-    console.log(`2-UserCompanyId=${req.loggedUserCompanyId}`);
-    console.log('-----------------------------------');
     let queues;
     if (req.loggedUserType === Constants.USER_ROOT) {
       queues = await Queue.findAll({
@@ -48,8 +44,6 @@ class QueueController {
     });
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Validation failed' });
-
-    console.log(req.body);
 
     const QueueWithSameDescriptionExists = await Queue.findOne({
       where: {

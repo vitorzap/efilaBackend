@@ -13,7 +13,7 @@ class UserController {
       sort.substring(0, sort.indexOf('.')) === 'company'
         ? [includeCompany, sort.substring(sort.indexOf('.') + 1), 'ASC']
         : sort;
-    console.log('sortEpec', sortEspec, sort);
+
     if (req.loggedUserType === Constants.USER_ROOT) {
       users = await User.findAndCountAll({
         include: [includeCompany],
@@ -35,7 +35,6 @@ class UserController {
   }
 
   async store(req, res) {
-    console.log(req.body);
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string()
@@ -99,8 +98,6 @@ class UserController {
   }
 
   async update(req, res) {
-    console.log('body');
-    console.log(req.body);
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
@@ -127,11 +124,6 @@ class UserController {
     if (newCompanyId) {
       return res.status(400).json({ error: 'Company can not be changed.' });
     }
-
-    console.log('body');
-    console.log(req.body);
-    // console.log(`newCompanyId=${newCompanyId}`);
-    console.log(`newEmail=${newEmail}`);
 
     const user = await User.findByPk(req.params.id);
     if (!user) {
@@ -166,8 +158,6 @@ class UserController {
       is_root: isRoot
     } = await user.update(req.body);
 
-    console.log('========================================');
-    console.log(`Company_Id=${companyId}`);
     return res.json({
       id,
       name,

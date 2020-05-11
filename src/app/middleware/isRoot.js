@@ -7,6 +7,5 @@ module.exports = async (req, res, next) => {
     return res
       .status(401)
       .json({ error: 'Operation forbidden for this type of user #' });
-  console.log('passou =========================================');
   return next();
 };

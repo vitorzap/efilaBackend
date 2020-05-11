@@ -19,7 +19,6 @@ require('./database');
 class App {
   constructor() {
     this.server = express();
-    console.log('APP <=====================');
     this.server.use(cors());
 
     // Sentry.init(sentryConfig);

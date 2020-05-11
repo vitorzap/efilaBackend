@@ -9,7 +9,6 @@ const Constants = require('../constants');
 
 class SessionController {
   async ping(req, res) {
-    console.log('PING-01 <=======');
     return res.json({
       Hello: {
         id: 'eFila',
@@ -19,7 +18,7 @@ class SessionController {
   }
 
   async login(req, res) {
-    console.log('LOGIN-01 <=======');
+    console.log('LOGIN');
     const schema = Yup.object().shape({
       email: Yup.string()
         .email()
@@ -57,23 +56,17 @@ class SessionController {
       name: loggedUserCompanyName,
       is_root: loggedUserCompanyIsRoot
     } = user.company;
-    console.log(`loggedUserIsRoot = ${loggedUserIsRoot}`);
-    console.log(`loggedUserCompanyIsRoot = ${loggedUserCompanyIsRoot}`);
 
     let finalLoggedUserType;
     if (loggedUserCompanyIsRoot) {
-      console.log('Root company');
       finalLoggedUserType = loggedUserIsRoot
         ? Constants.USER_ROOT
         : Constants.USER_ORDINARY;
     } else {
-      console.log('Commom company');
       finalLoggedUserType = loggedUserIsRoot
         ? Constants.USER_LOCALROOT
         : Constants.USER_ORDINARY;
     }
-
-    console.log(`finalLoggedUserType = ${finalLoggedUserType}`);
 
     let finalLoggedUserCompanyId = loggedUserCompanyId;
     let finalLoggedUserCompanyName = loggedUserCompanyName;
@@ -93,8 +86,6 @@ class SessionController {
       finalLoggedUserCompanyName = alterCompany.name;
       finalLoggedUserType = Constants.USER_LOCALROOT;
     }
-
-    console.log(`finalLoggedUserType = ${finalLoggedUserType}`);
 
     return res.json({
       loggedUser: {
@@ -129,7 +120,6 @@ class SessionController {
 
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Validation failed' });
-    console.log(req.body);
 
     const user = await User.findByPk(req.loggedUserId);
     if (!user) {

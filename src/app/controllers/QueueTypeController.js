@@ -14,7 +14,6 @@ class QueueTypeController {
       sort.substring(0, sort.indexOf('.')) === 'company'
         ? [includeCompany, sort.substring(sort.indexOf('.') + 1), 'ASC']
         : sort;
-    console.log('sortEpec', sortEspec, sort);
     if (req.loggedUserType === Constants.USER_ROOT) {
       queueTypes = await QueueType.findAndCountAll({
         include: [includeCompany],
