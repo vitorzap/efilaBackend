@@ -1,13 +1,8 @@
 const Sequelize = require('sequelize');
 
-const { Client } = require('pg');
-
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
-});
-
-console.log('client.DATABASE_URL', client.DATABASE_URL);
+const connectionUrl =
+  'dbname=db7isbfgi7h2in host=ec2-54-81-37-115.compute-1.amazonaws.com port=5432 user=sgtxzajrpgjyth password=8418add9f25f9b5218f59782bfe3be3be5925624a588caa7a4af8676d3c75ac7 sslmode=require';
+// 'postgres://sgtxzajrpgjyth:8418add9f25f9b5218f59782bfe3be3be5925624a588caa7a4af8676d3c75ac7@ec2-54-81-37-115.compute-1.amazonaws.com:5432/db7isbfgi7h2i';
 
 const Company = require('../app/models/Company');
 const User = require('../app/models/User');
