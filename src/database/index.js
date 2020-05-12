@@ -6,33 +6,30 @@ const QueueType = require('../app/models/QueueType');
 const Queue = require('../app/models/Queue');
 const Position = require('../app/models/Position');
 
-// const getDatabaseConfig = require('../config/database');
-
-// const databaseConfig = getDatabaseConfig();
-
-const databaseConfig = require('../config/databaseX');
-
-console.log('databaseConfig', databaseConfig);
+const { url: dbUrl, config: dbConfig } = require('../config/database');
 
 const models = [Company, User, QueueType, Queue, Position];
-console.log('initDatabase');
+
 class Database {
   constructor() {
     this.init();
   }
 
   async init() {
-    console.log('Conectando a database Postgres', databaseConfig);
-    this.connection = new Sequelize(databaseConfig);
+    console.log('Conectando a database');
+    this.connection = new Sequelize(
+      process.env.DATABASE_URL || dbUrl,
+      dbConfig
+    );
     models
       .map(model => model.init(this.connection))
       .map(model => model.associate && model.associate(this.connection.models));
 
     try {
       await this.connection.authenticate();
-      console.log('Conectado com sucesso a database Postgres');
+      console.log('Conectado ao database com sucesso !!!');
     } catch (error) {
-      console.log('Não foi possivel conexão a database Postgres', error);
+      console.log('Cconexão a database falhou ???', error);
     }
   }
 }
