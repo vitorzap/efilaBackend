@@ -8,6 +8,8 @@ const Position = require('../app/models/Position');
 
 const { url: dbUrl, config: dbConfig } = require('../config/database');
 
+console.log('=========> DATABASE_URL', process.env.DATABASE_URL);
+
 const models = [Company, User, QueueType, Queue, Position];
 
 class Database {
@@ -29,7 +31,7 @@ class Database {
       await this.connection.authenticate();
       console.log('Conectado ao database com sucesso !!!');
     } catch (error) {
-      console.log('Cconexão a database falhou ???', error);
+      console.log('Conexão a database falhou ???', error);
     }
   }
 }

@@ -1,10 +1,10 @@
-// import * as Yup from 'yup';
+require('dotenv').config();
+
 const Yup = require('yup');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
 const Company = require('../models/Company');
-const authConfig = require('../../config/auth');
 const Constants = require('../constants');
 
 class SessionController {
@@ -18,7 +18,6 @@ class SessionController {
   }
 
   async login(req, res) {
-    console.log('LOGIN');
     const schema = Yup.object().shape({
       email: Yup.string()
         .email()
@@ -102,9 +101,9 @@ class SessionController {
           finalLoggedUserType,
           finalLoggedUserCompanyId
         },
-        authConfig.secret,
+        process.env.AUTH_SECRET,
         {
-          expiresIn: authConfig.expiresIn
+          expiresIn: process.env.AUTH_EXPIRES_IN
         }
       )
     });
@@ -160,9 +159,9 @@ class SessionController {
             finalLoggedUserCompanyId: alterCompanyId,
             finalLoggedUserType: req.loggedUserType
           },
-          authConfig.secret,
+          process.env.AUTH_SECRET,
           {
-            expiresIn: authConfig.expiresIn
+            expiresIn: process.env.AUTH_EXPIRES_IN
           }
         )
       }
