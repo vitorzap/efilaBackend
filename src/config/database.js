@@ -1,16 +1,44 @@
-module.exports = {
-  dialect: 'postgres',
-  dialectOptions: {
-    ssl: true
-  },
-  host: 'ec2-54-81-37-115.compute-1.amazonaws.com',
-  username: 'sgtxzajrpgjyth',
-  password: '8418add9f25f9b5218f59782bfe3be3be5925624a588caa7a4af8676d3c75ac7',
-  database: 'db7isbfgi7h2in',
-  define: {
-    timestamp: true,
-    underscored: true,
-    underscoredAll: true,
-    freezeTableName: false
+const path = require('path');
+require('dotenv').config();
+
+console.log(process.env.DATABASE_HOST);
+
+module.exports = function getDataBaseConfig() {
+  console.log('getDataBaseConfig');
+  const DbConfig = {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: true
+    },
+    host: '',
+    database: '',
+    username: '',
+    password: '',
+
+    define: {
+      timestamp: true,
+      underscored: true,
+      underscoredAll: true,
+      freezeTableName: false
+    }
+  };
+  let envHost = process.env.DATABASE_HOST;
+  let envDatabase = process.env.DATABASE_NAME;
+  let envUsername = process.env.DATABASE_USER_NAME;
+  let envPassword = process.env.DATABASE_USER_PASSWORD;
+  if (process.env.DATABASE_URL) {
+    let item2;
+    let item3;
+    const items = process.env.DATABASE_URL.split('//');
+    [envUsername, item2, item3] = items[1].split(':');
+    [envPassword, envHost] = item2.split('@');
+    [, envDatabase] = item3.split('/');
   }
+  console.log('=====> Config=', envHost, envDatabase, envUsername, envPassword);
+
+  DbConfig.host = envHost;
+  DbConfig.database = envDatabase;
+  DbConfig.username = envUsername;
+  DbConfig.password = envPassword;
+  return DbConfig;
 };
