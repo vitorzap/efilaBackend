@@ -5,6 +5,7 @@ const QueueType = require('../models/QueueType');
 const Constants = require('../constants');
 
 class CompanyController {
+  console.log('req.loggedUserType',req.loggedUserType);
   async index(req, res) {
     let companies;
     const { page = 1, sort = 'name' } = req.query;
