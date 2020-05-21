@@ -1,82 +1,84 @@
-// import * as Yup from 'yup';
 const Yup = require('yup');
 const Queue = require('../models/Queue');
 const QueueType = require('../models/QueueType');
 const Company = require('../models/Company');
+const Position = require('../models/Position');
 const Constants = require('../constants');
 
 class QueueController {
   async index(req, res) {
     let queues;
+    const { page = 1, sort = 'description' } = req.query;
+    const includeCompany = { model: Company, as: 'company' };
+    const includeQueueType = { model: QueueType, as: 'queue_type' };
+    const sortEspec =
+      sort.substring(0, sort.indexOf('.')) === 'company'
+        ? [includeCompany, sort.substring(sort.indexOf('.') + 1), 'ASC']
+        : sort.substring(0, sort.indexOf('.')) === 'queue_type'
+        ? [includeQueueType, sort.substring(sort.indexOf('.') + 1), 'ASC']
+        : sort;
     if (req.loggedUserType === Constants.USER_ROOT) {
-      queues = await Queue.findAll({
-        include: [
-          { model: Company, as: 'company' },
-          { model: QueueType, as: 'queue_type' }
-        ],
-        order: ['description']
+      queues = await Queue.findAndCountAll({
+        include: [includeCompany, includeQueueType],
+        order: [sortEspec],
+        limit: Constants.ROWS_PER_PAGE,
+        offset: (page - 1) * Constants.ROWS_PER_PAGE
       });
     } else {
-      queues = await Queue.findAll({
+      queues = await Queue.findAndCountAll({
         where: { company_id: req.loggedUserCompanyId },
-        include: [
-          { model: Company, as: 'company' },
-          { model: QueueType, as: 'queue_type' }
-        ],
-        order: ['description']
+        include: [includeCompany, includeQueueType],
+        order: [sortEspec],
+        limit: Constants.ROWS_PER_PAGE,
+        offset: (page - 1) * Constants.ROWS_PER_PAGE
       });
     }
-
+    queues.perpage = Constants.ROWS_PER_PAGE;
     return res.json(queues);
   }
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      description: Yup.string().required(),
-      // company_id: Yup.number()
-      //   .required()
-      //   .positive()
-      //   .integer(),
-      queue_type_id: Yup.number()
-        .required()
-        .positive()
-        .integer()
+      description: Yup.string().required()
     });
     if (!(await schema.isValid(req.body)))
-      return res.status(400).json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Dados não válidos.' });
+
+    const companyId =
+      req.loggedUserType === Constants.USER_ROOT
+        ? req.body.company_id
+        : req.loggedUserCompanyId;
 
     const QueueWithSameDescriptionExists = await Queue.findOne({
       where: {
         description: req.body.description,
-        company_id: req.loggedUserCompanyId
+        company_id: companyId
       }
     });
 
     if (QueueWithSameDescriptionExists)
       return res
         .status(400)
-        .json({ error: 'There is already Queue with this description.' });
+        .json({ error: 'Já existe uma Fila com esta descrição.' });
 
-    // const company = await Company.findByPk(req.body.company_id);
-    const company = await Company.findByPk(req.loggedUserCompanyId);
+    const company = await Company.findByPk(companyId);
     if (!company)
-      return res.status(400).json({ error: 'Company does not exists.' });
+      return res.status(400).json({ error: 'Empresa não cadastrada.' });
 
-    const queueType = await QueueType.findByPk(req.body.queue_type_id);
+    const queueType = await QueueType.findByPk(req.body.queueType_id);
     if (!queueType)
-      return res.status(400).json({ error: 'Queue type does not exists.' });
-    // if (queueType.company_id !== company.id)
-    if (queueType.company_id !== req.loggedUserCompanyId)
+      return res.status(400).json({ error: 'Tipo de Fila não cadastrada.' });
+    if (queueType.company_id !== companyId)
       return res.status(400).json({
-        error: 'Company does not have this queue type.'
+        error: 'Este Tipo de Fila não esta cadastrado para esta empresa.'
       });
 
     const { id, description } = await Queue.create({
       description: req.body.description,
       posicoes: 0,
       espera: 0,
-      company_id: req.loggedUserCompanyId,
-      queue_type_id: req.body.queue_type_id
+      company_id: companyId,
+      queue_type_id: req.body.queueType_id
     });
 
     return res.json({ id, description });
@@ -90,62 +92,65 @@ class QueueController {
         .integer(),
       espera: Yup.number()
         .positive()
-        .integer(),
-      // company_id: Yup.number()
-      //   .positive()
-      //   .integer(),
-      queue_type_id: Yup.number()
-        .positive()
         .integer()
     });
 
     if (!(await schema.isValid(req.body)))
-      return res.status(400).json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Dados não válidos.' });
 
     const {
       description: newDescription,
       company_id: newCompanyId,
       queue_type_id: newQueueTypeId
     } = req.body;
-    if (newCompanyId) {
-      return res.status(400).json({ error: 'Company can not be changed.' });
-    }
 
     const queue = await Queue.findByPk(req.params.id);
     if (!queue) {
-      return res.status(400).json({ error: 'Queue does not exists.' });
+      return res.status(400).json({ error: 'Fila não cadastrada.' });
     }
-    if (queue.company_id !== req.loggedUserCompanyId) {
-      return res
-        .status(400)
-        .json({ error: 'Queue does not exists (in this company).' });
+
+    if (req.loggedUserType !== Constants.USER_ROOT) {
+      if (newCompanyId !== queue.company_id) {
+        return res
+          .status(400)
+          .json({ error: 'Não é possível alterar companhia da Fila.' });
+      }
+    }
+
+    let wCompanyId = queue.company_id;
+    if (newCompanyId && newCompanyId !== queue.company_id) {
+      wCompanyId = newCompanyId;
+      const company = await Company.findByPk(wCompanyId);
+      if (!company) {
+        return res.status(400).json({ error: 'Empresa não cadastrada.' });
+      }
     }
 
     if (newDescription && newDescription !== queue.description) {
       const QueueWithSameDescriptionExists = await Queue.findOne({
         where: {
           description: newDescription,
-          company_id: req.loggedUserCompanyId
+          company_id: wCompanyId
         }
       });
 
       if (QueueWithSameDescriptionExists)
         return res.status(400).json({
-          error: 'There is already Queue type with this description.'
+          error: 'Já existe uma Fila com esta descrição.'
         });
     }
 
-    if (newCompanyId && newCompanyId !== queue.company_id) {
-      const company = await Company.findByPk(newCompanyId);
-      if (!company)
-        return res.status(400).json({ error: 'Company does not exists.' });
+    if (newQueueTypeId && newQueueTypeId !== queue.queue_type_id) {
+      const queueType = await QueueType.findByPk(newQueueTypeId);
+      if (!queueType) {
+        return res.status(400).json({ error: 'Tipo de Fila não cadastrado.' });
+      }
+      if (queueType.company_id !== wCompanyId) {
+        return res
+          .status(400)
+          .json({ error: 'Fila não cadastrada (para esta empresa).' });
+      }
     }
-
-    // if (newQueueTypeId && newQueueTypeId !== queue.queue_type_id) {
-    //   const queueType = await QueueType.findByPk(newQueueTypeId);
-    //   if (!queueType)
-    //     return res.status(400).json({ error: 'Queue type does not exists.' });
-    // }
 
     const {
       id,
@@ -169,13 +174,26 @@ class QueueController {
   async delete(req, res) {
     const queue = await Queue.findByPk(req.params.id);
     if (!queue) {
-      return res.status(400).json({ error: 'Queue does not exists.' });
+      return res.status(400).json({ error: 'Fila não cadastrada.' });
     }
-    if (queue.company_id !== req.loggedUserCompanyId) {
+    const wCompanyId =
+      req.loggedUserType === Constants.USER_ROOT
+        ? queue.company_id
+        : req.loggedUserCompanyId;
+
+    if (queue.company_id !== wCompanyId) {
       return res
         .status(400)
-        .json({ error: 'Queue type does not exists (in this company).' });
+        .json({ error: 'Fila não cadastrada (para esta empresa).' });
     }
+
+    const childPosition = await Position.findOne({
+      where: { queue_id: queue.id }
+    });
+    if (childPosition) {
+      res.status(400).json({ error: 'Fila ainda tem posições' });
+    }
+
     const {
       id,
       description,

@@ -1,4 +1,3 @@
-// import * as Yup = require('yup';
 const Yup = require('yup');
 const QueueType = require('../models/QueueType');
 const Company = require('../models/Company');
@@ -17,7 +16,6 @@ class QueueTypeController {
     if (req.loggedUserType === Constants.USER_ROOT) {
       queueTypes = await QueueType.findAndCountAll({
         include: [includeCompany],
-        // order: [sortEspec || 'description'],
         order: [sortEspec],
         limit: Constants.ROWS_PER_PAGE,
         offset: (page - 1) * Constants.ROWS_PER_PAGE
@@ -35,6 +33,16 @@ class QueueTypeController {
     return res.json(queueTypes);
   }
 
+  async listqueuetypes(req, res) {
+    const { companyid } = req.query;
+    const queueTypes = await QueueType.findAll({
+      where: { company_id: companyid },
+      attributes: ['id', 'description'],
+      order: ['description']
+    });
+    return res.json(queueTypes);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       description: Yup.string().required(),
@@ -44,7 +52,7 @@ class QueueTypeController {
         .integer()
     });
     if (!(await schema.isValid(req.body)))
-      return res.status(400).json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Dados não válidos' });
 
     const QueueTypeWithSameDescriptionExists = await QueueType.findOne({
       where: {
@@ -56,9 +64,8 @@ class QueueTypeController {
     if (QueueTypeWithSameDescriptionExists)
       return res
         .status(400)
-        .json({ error: 'There is already QueueType with this description.' });
+        .json({ error: 'Já existe um Tipo de Fila com esta descrição.' });
 
-    //      const company = await Company.findByPk(req.body.company_id);
     let company;
     if (req.loggedUserType === Constants.USER_ROOT) {
       company = await Company.findByPk(req.body.company_id);
@@ -66,9 +73,7 @@ class QueueTypeController {
       company = await Company.findByPk(req.loggedUserCompanyId);
     }
     if (!company)
-      return res
-        .status(400)
-        .json({ error: 'Queue type company does not exists.' });
+      return res.status(400).json({ error: 'Tipo de Fila não cadastrado.' });
 
     const { name: companyName } = company;
 
@@ -83,29 +88,25 @@ class QueueTypeController {
   async update(req, res) {
     const schema = Yup.object().shape({
       description: Yup.string()
-      // ,
-      // company_id: Yup.number()
-      //   .positive()
-      //   .integer()
     });
 
     if (!(await schema.isValid(req.body)))
-      return res.status(400).json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Dados não válidos' });
 
     const { description: newDescription, company_id: newCompanyId } = req.body;
     if (newCompanyId) {
-      return res.status(400).json({ error: 'Company can not be changed.' });
+      return res.status(400).json({ error: 'Empresa não pode ser alterada.' });
     }
 
     const queueType = await QueueType.findByPk(req.params.id);
     if (!queueType) {
-      return res.status(400).json({ error: 'Queue type does not exists.' });
+      return res.status(400).json({ error: 'Tipo de Fila não cadastrado.' });
     }
     if (req.loggedUserType !== Constants.USER_ROOT) {
       if (queueType.company_id !== req.loggedUserCompanyId) {
         return res
           .status(400)
-          .json({ error: 'Queue type does not exists (in this company).' });
+          .json({ error: 'Tipo de Fila não cadastrado (para esta empresa).' });
       }
     }
 
@@ -119,15 +120,10 @@ class QueueTypeController {
 
       if (queueTypeWithSameDescriptionExists)
         return res.status(400).json({
-          error: 'There is already Queue type with this description.'
+          error: 'Já existe um Tipo de Fila com esta descrição.'
         });
     }
 
-    // if (newCompanyId && newCompanyId !== queueType.company_id) {
-    //   const company = await Company.findByPk(req.body.company_id);
-    //   if (!company)
-    //     return res.status(400).json({ error: 'Company does not exists.' });
-    // }
     const { id, description, company_id: companyId } = await queueType.update(
       req.body
     );
@@ -138,12 +134,14 @@ class QueueTypeController {
   async delete(req, res) {
     const queueType = await QueueType.findByPk(req.params.id);
     if (!queueType) {
-      return res.status(400).json({ error: 'QueueType does not exists.' });
+      return res.status(400).json({ error: 'Tipo de Fila não cadastrado.' });
     }
-    if (queueType.company_id !== req.loggedUserCompanyId) {
-      return res
-        .status(400)
-        .json({ error: 'Queue type does not exists (in this company).' });
+    if (req.loggedUserType !== Constants.USER_ROOT) {
+      if (queueType.company_id !== req.loggedUserCompanyId) {
+        return res
+          .status(400)
+          .json({ error: 'Tipo de Fila não cadastrado (para esta empresa).' });
+      }
     }
 
     const queue = await Queue.findOne({
@@ -151,7 +149,7 @@ class QueueTypeController {
     });
     if (queue) {
       return res.status(400).json({
-        error: 'There is at least one queue linked to this queue type.'
+        error: 'Existe pelo menos um Fila ligada a este Tipo de Fila.'
       });
     }
 
@@ -162,5 +160,4 @@ class QueueTypeController {
   }
 }
 
-// export default new QueueTypeController();
 module.exports = new QueueTypeController();

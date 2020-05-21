@@ -53,13 +53,13 @@ class UserController {
       is_root: Yup.boolean()
     });
     if (!(await schema.isValid(req.body)))
-      return res.status(400).json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Dados não válidos.' });
 
     const AnotherUserSameEmailExists = await User.findOne({
       where: { email: req.body.email }
     });
     if (AnotherUserSameEmailExists)
-      return res.status(400).json({ error: 'User already exists.' });
+      return res.status(400).json({ error: 'Usuário já existente.' });
 
     let company;
     if (req.loggedUserType === Constants.USER_ROOT) {
@@ -68,7 +68,9 @@ class UserController {
       company = await Company.findByPk(req.loggedUserCompanyId);
     }
     if (!company)
-      return res.status(400).json({ error: 'User company does not exists.' });
+      return res
+        .status(400)
+        .json({ error: 'Empresa do usuário não cadastrada.' });
 
     const { name: companyName } = company;
 
@@ -110,45 +112,33 @@ class UserController {
       confirmPassword: Yup.string().when('password', (password, field) =>
         password ? field.required().oneOf([Yup.ref('password')]) : field
       ),
-      // company_id: Yup.number()
-      //   .positive()
-      //   .integer(),
       is_root: Yup.boolean()
     });
 
     if (!(await schema.isValid(req.body)))
-      return res.status(400).json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Dados não válidos' });
 
     // const { email: newEmail, oldPassword, company_id: newCompanyId } = req.body;
     const { email: newEmail, oldPassword, company_id: newCompanyId } = req.body;
     if (newCompanyId) {
-      return res.status(400).json({ error: 'Company can not be changed.' });
+      return res.status(400).json({ error: 'Empresa não pode ser alterada.' });
     }
 
     const user = await User.findByPk(req.params.id);
     if (!user) {
-      return res.status(400).json({ error: 'User does not exists.' });
+      return res.status(400).json({ error: 'Usuário não cadastrado.' });
     }
-    if (user.company_id !== req.loggedUserCompanyId) {
-      return res
-        .status(400)
-        .json({ error: 'User does not exists (in this company).' });
-    }
-    // if (newCompanyId && newCompanyId !== req.body.company_id) {
-    //   const company = await Company.findByPk(req.body.company_id);
-    //   if (!company)
-    //     return res.status(400).json({ error: 'User company does not exists.' });
-    // }
+
     if (newEmail && newEmail !== user.email) {
       const AnotherUserSameEmailExists = await User.findOne({
         where: { email: newEmail }
       });
       if (AnotherUserSameEmailExists)
-        return res.status(400).json({ error: 'User already exists.' });
+        return res.status(400).json({ error: 'Usuário já cadastrado.' });
     }
 
     if (oldPassword && !(await user.checkPassword(oldPassword)))
-      return res.status(401).json({ error: 'Password does not match.' });
+      return res.status(401).json({ error: 'Senha não confere.' });
 
     const {
       id,
@@ -170,14 +160,14 @@ class UserController {
   async delete(req, res) {
     const user = await User.findByPk(req.params.id);
     if (!user) {
-      return res.status(400).json({ error: 'User does not exists.' });
+      return res.status(400).json({ error: 'Usuário não cadatrado.' });
     }
 
     if (req.loggedUserType !== Constants.USER_ROOT) {
       if (user.company_id !== req.loggedUserCompanyId) {
         return res
           .status(400)
-          .json({ error: 'User does not exists (in this company).' });
+          .json({ error: 'Usuário não cadastrado (nesta empresa).' });
       }
     }
     const { id, name, email, is_root: isRoot, company_id: companyId } = user;

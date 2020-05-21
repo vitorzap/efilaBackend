@@ -1,4 +1,3 @@
-// import * as Yup from 'yup';
 const Yup = require('yup');
 const Company = require('../models/Company');
 const User = require('../models/User');
@@ -39,16 +38,16 @@ class CompanyController {
   async getOne(req, res) {
     const company = await Company.findByPk(req.params.id);
     if (!company) {
-      return res.status(400).json({ error: 'Empresa não existe.' });
+      return res.status(400).json({ error: 'Empresa não cadastrada.' });
     }
 
-    const { id, name, email, is_root } = company;
+    const { id, name, email, is_root: isRoot } = company;
 
     return res.json({
       id,
       name,
       email,
-      is_root
+      isRoot
     });
   }
 
@@ -62,7 +61,7 @@ class CompanyController {
     });
 
     if (!(await schema.isValid(req.body)))
-      return res.status(400).json({ error: 'Dados invalidos' });
+      return res.status(400).json({ error: 'Dados não válidos' });
 
     const companyWithSameEmailExists = await Company.findOne({
       where: { email: req.body.email }
@@ -99,13 +98,13 @@ class CompanyController {
     });
 
     if (!(await schema.isValid(req.body)))
-      return res.status(400).json({ error: 'Dados invalidos' });
+      return res.status(400).json({ error: 'Dados não válidos' });
 
     const { email: newEmail, is_root: newIsRoot } = req.body;
 
     const company = await Company.findByPk(req.params.id);
     if (!company) {
-      return res.status(400).json({ error: 'Empresa não existe.' });
+      return res.status(400).json({ error: 'Empresa não cadastrada.' });
     }
 
     if (newEmail && newEmail !== company.email) {
@@ -159,6 +158,7 @@ class CompanyController {
         .status(400)
         .json({ error: 'Existe pelo menos um usuário ligado a esta empresa.' });
     }
+
     const { id, name, email, is_root: isRoot } = company;
     await company.destroy();
 
@@ -171,5 +171,4 @@ class CompanyController {
   }
 }
 
-// export default new CompanyController();
 module.exports = new CompanyController();

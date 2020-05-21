@@ -34,6 +34,7 @@ routes.get('/queuetypes', QueueTypeController.index);
 routes.post('/queuetypes', QueueTypeController.store);
 routes.put('/queuetypes/:id', QueueTypeController.update);
 routes.delete('/queuetypes/:id', QueueTypeController.delete);
+routes.get('/listqueuetypes', QueueTypeController.listqueuetypes);
 // Queues
 routes.get('/queues', QueueController.index);
 routes.post('/queues', QueueController.store);
