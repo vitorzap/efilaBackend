@@ -11,11 +11,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      posicoes: {
+      positions: {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      espera: {
+      wait: {
         type: Sequelize.INTEGER,
         allowNull: false
       },

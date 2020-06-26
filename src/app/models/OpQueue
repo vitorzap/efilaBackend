@@ -1,0 +1,18 @@
+const mongoose = require('mongoose');
+
+const OpQueueSchema = new mongoose.Schema({
+  today: Date,
+  day_period: Number,
+  queue_id: Number,
+  company_id: Number,
+  queue_type_id: Number,
+  description: String,
+  first_position: { type: Number, default: 0 },
+  last_position: { type: Number, default: 0 },
+  positions: { type: Number, default: 0 },
+  wait: { type: Number, default: 0 }
+}, {
+  timestamps: true,
+});
+
+module.exports = mongoose.model('opqueue', OpQueueSchema);

@@ -5,7 +5,10 @@ const QueueTypeController = require('./app/controllers/QueueTypeController');
 const QueueController = require('./app/controllers/QueueController');
 const SessionController = require('./app/controllers/SessionController');
 const PositionController = require('./app/controllers/PositionController');
-
+//
+const OpQueueController = require('./app/controllers/OpQueueController');
+const OpPositionController = require('./app/controllers/OpPositionController');
+//
 const authMiddleware = require('./app/middleware/auth');
 const isRootOrAdminMiddleware = require('./app/middleware/isRootOrAdmin');
 const isRootMiddleware = require('./app/middleware/isRoot');
@@ -23,7 +26,13 @@ routes.use(authMiddleware);
 routes.use(isRootOrAdminMiddleware);
 // Change company
 routes.put('/change', SessionController.change);
-
+// Operation
+routes.get('/opqueues', OpQueueController.index);
+routes.post('/opqueues', OpQueueController.store);
+routes.delete('/opqueues', OpQueueController.delete);
+routes.get('/oppositions', OpPositionController.index);
+routes.post('/oppositions', OpPositionController.enqueue);
+routes.delete('/oppositions/:id', OpPositionController.dequeue);
 // Users
 routes.post('/users', UserController.store);
 routes.get('/users', UserController.index);

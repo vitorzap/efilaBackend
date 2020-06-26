@@ -75,8 +75,8 @@ class QueueController {
 
     const { id, description } = await Queue.create({
       description: req.body.description,
-      posicoes: 0,
-      espera: 0,
+      positions: 0,
+      wait: 0,
       company_id: companyId,
       queue_type_id: req.body.queueType_id
     });
@@ -87,10 +87,10 @@ class QueueController {
   async update(req, res) {
     const schema = Yup.object().shape({
       description: Yup.string(),
-      posicoes: Yup.number()
+      positions: Yup.number()
         .positive()
         .integer(),
-      espera: Yup.number()
+      wait: Yup.number()
         .positive()
         .integer()
     });
@@ -155,8 +155,8 @@ class QueueController {
     const {
       id,
       description,
-      posicoes,
-      espera,
+      positions,
+      wait,
       company_id: companyId,
       queue_type_id: queueTypeId
     } = await queue.update(req.body);
@@ -164,8 +164,8 @@ class QueueController {
     return res.json({
       id,
       description,
-      posicoes,
-      espera,
+      positions,
+      wait,
       companyId,
       queueTypeId
     });

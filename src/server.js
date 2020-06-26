@@ -1,7 +1,9 @@
 const app = require('./app');
 
+app.on('connection', socket => {
+  console.log(`Socket conectado: ${socket.id}`);
+});
+
 const port = process.env.PORT || 3333;
 
-console.log(`Server port = (${port})`);
-
-app.listen(port);
+app.listen(port, () => console.log(`Server port = (${port})`));

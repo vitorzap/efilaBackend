@@ -6,6 +6,6 @@ module.exports = async (req, res, next) => {
   if (req.loggedUserType !== Constants.USER_ROOT)
     return res
       .status(401)
-      .json({ error: 'Operation forbidden for this type of user #' });
+      .json({ error: 'Usuário não autorizado para esta operação #' });
   return next();
 };

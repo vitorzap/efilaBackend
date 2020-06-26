@@ -22,7 +22,7 @@ class UserController {
         offset: (page - 1) * Constants.ROWS_PER_PAGE
       });
     } else {
-      users = await User.findAll({
+      users = await User.findAndCountAll({
         where: { company_id: req.loggedUserCompanyId },
         include: [includeCompany],
         order: [sortEspec],
@@ -87,7 +87,6 @@ class UserController {
       is_root: req.body.is_root,
       company_id: company.id
     });
-    // req.body);
 
     return res.json({
       id,

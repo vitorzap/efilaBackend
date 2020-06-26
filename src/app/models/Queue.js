@@ -7,8 +7,8 @@ class Queue extends Model {
     super.init(
       {
         description: Sequelize.STRING,
-        posicoes: Sequelize.INTEGER,
-        espera: Sequelize.INTEGER,
+        positions: Sequelize.INTEGER,
+        wait: Sequelize.INTEGER,
         company_id: Sequelize.INTEGER,
         queue_type_id: Sequelize.INTEGER
       },

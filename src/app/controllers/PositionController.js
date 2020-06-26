@@ -80,7 +80,7 @@ class PositionController {
     if (queue.company_id !== req.loggedUserCompanyId) {
       return res
         .status(400)
-        .json({ error: 'Queue type does not exists (in this company).' });
+        .json({ error: 'Queue does not exists (in this company).' });
     }
 
     const PositionAlreadyExists = await Position.findOne({

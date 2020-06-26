@@ -6,7 +6,6 @@ const Constants = require('../constants');
 
 class CompanyController {
   async index(req, res) {
-    console.log('req.loggedUserType', req.loggedUserType);
     let companies;
     const { page = 1, sort = 'name' } = req.query;
     if (req.loggedUserType === Constants.USER_ROOT) {
@@ -17,7 +16,13 @@ class CompanyController {
       });
       companies.perpage = Constants.ROWS_PER_PAGE;
     } else {
-      companies = await Company.findByPk(req.loggedUserCompanyId);
+      const wCompanies = {
+        count: 1,
+        rows: [],
+        perpage: Constants.ROWS_PER_PAGE
+      };
+      wCompanies.rows.push(await Company.findByPk(req.loggedUserCompanyId));
+      companies = wCompanies;
     }
 
     return res.json(companies);

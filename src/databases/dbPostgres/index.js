@@ -1,22 +1,22 @@
 const Sequelize = require('sequelize');
 
-const Company = require('../app/models/Company');
-const User = require('../app/models/User');
-const QueueType = require('../app/models/QueueType');
-const Queue = require('../app/models/Queue');
-const Position = require('../app/models/Position');
+const Company = require('../../app/models/Company');
+const User = require('../../app/models/User');
+const QueueType = require('../../app/models/QueueType');
+const Queue = require('../../app/models/Queue');
+const Position = require('../../app/models/Position');
 
-const { config: dbConfig } = require('../config/database');
+const { config: dbConfig } = require('../../config/database');
 
 const models = [Company, User, QueueType, Queue, Position];
 
-class Database {
+class MainDatabase {
   constructor() {
     this.init();
   }
 
   async init() {
-    console.log('Conectando a database');
+    console.log('Conectando a database POSTGRES');
     this.connection = new Sequelize(process.env.DATABASE_URL, dbConfig);
     models
       .map(model => model.init(this.connection))
@@ -24,7 +24,7 @@ class Database {
 
     try {
       await this.connection.authenticate();
-      console.log('Conectado ao database com sucesso !!!');
+      console.log('Conectado ao database POSTGRES com sucesso !!!');
     } catch (error) {
       console.log('Conexão a database falhou ???', error);
     }
@@ -32,4 +32,4 @@ class Database {
 }
 
 // export default new Database()
-module.exports = new Database();
+module.exports = new MainDatabase();

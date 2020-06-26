@@ -1,0 +1,15 @@
+const mongoose = require('mongoose');
+
+const OpPositionSchema = new mongoose.Schema({
+  company_id: Number,
+  queue_id: Number,
+  arrived_at: Date,
+  name: String,
+  phone: String,
+  email: String,
+  position: Number
+}, {
+  timestamps: true,
+});
+
+module.exports = mongoose.model('OpPosition', OpPositionSchema);
