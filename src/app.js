@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-console.log('App started');
+console.log('App started ***');
 
 const express = require('express');
 const cors = require('cors');
