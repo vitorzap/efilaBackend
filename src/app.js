@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-console.log('App started ***');
+console.log('eFILA STARTED');
 
 const express = require('express');
 const cors = require('cors');
@@ -13,7 +13,6 @@ const io = require('socket.io')(server);
 const routes = require('./routes');
 
 app.use((req, res, next) => {
-  console.log('req.io = io');
   req.io = io;
   next();
 });

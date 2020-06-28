@@ -29,7 +29,6 @@ class OpPositionController {
   }
 
   async enqueue(req, res) {
-    console.log('1- ENQUEUE<== <== <== <== <== <==<==<==<==<==<==<==');
     const schema = Yup.object().shape({
       queue_id: Yup.number()
         .required()
@@ -45,7 +44,6 @@ class OpPositionController {
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: 'Validation failed' });
 
-    console.log('1- ENQUEUE<== <== <== <== <== <==<==<==<==<==<==<==');
     const { queue_id: queueId, name, phone, email } = req.body;
 
     const opQueue = await OpQueue.findOne({
@@ -115,7 +113,6 @@ class OpPositionController {
             last_position: result2.last_position,
             positions: result2.positions
           };
-          console.log('EMIT ===> ', `enqueue${req.loggedUserCompanyId}`);
           req.io.emit(`enqueue${req.loggedUserCompanyId}`, returnObj);
           return res.json(returnObj);
         }
@@ -124,7 +121,6 @@ class OpPositionController {
   }
 
   async dequeue(req, res) {
-    console.log('1- DEQUEUE<== <== <== <== <== <==<==<==<==<==<==<==');
     const opQueue = await OpQueue.findById(req.params.id);
     if (!opQueue)
       return res.status(400).json({ error: 'Queue does not exists.' });
@@ -133,7 +129,6 @@ class OpPositionController {
         .status(400)
         .json({ error: 'Queue does not exist in your company.' });
     }
-    console.log('opQueue._id', opQueue._id);
     const opPosition = await OpPosition.findOne({
       $and: [
         { company_id: req.loggedUserCompanyId },
@@ -144,7 +139,6 @@ class OpPositionController {
     if (!opPosition) {
       return res.status(400).json({ error: 'Position does not exists.' });
     }
-    console.log('opPosition', opPosition._id, opPosition.position);
 
     const newFirstPosition = opQueue.first_position + 1;
     const newPositions = opQueue.positions - 1;
@@ -158,20 +152,11 @@ class OpPositionController {
     } else {
       newWait = timeElapsed;
     }
-    console.log(
-      'Entrada=',
-      opPosition.arrived_at.toLocaleString('pt-BR', { timeZone: 'UTC' })
-    );
-    console.log(
-      'Saida  =',
-      served_at.toLocaleString('pt-BR', { timeZone: 'UTC' })
-    );
     const days = Math.floor(timeElapsed / (1000 * 60 * 60 * 24));
     let resto = timeElapsed % (1000 * 60 * 60 * 24);
     const horas = Math.floor(resto / (1000 * 60 * 60));
     resto = timeElapsed % (1000 * 60 * 60);
     const minutos = Math.ceil(resto / (1000 * 60));
-    console.log('Espera', days, horas, minutos);
 
     const returnObj = {};
     OpPosition.deleteOne({ _id: opPosition._id }, err1 => {
@@ -198,7 +183,6 @@ class OpPositionController {
             wait: newWait
           };
 
-          console.log('EMIT ===> ', `dequeue${req.loggedUserCompanyId}`);
           req.io.emit(`dequeue${req.loggedUserCompanyId}`, returnObj);
           return res.json(returnObj);
         }

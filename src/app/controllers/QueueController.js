@@ -65,7 +65,7 @@ class QueueController {
     if (!company)
       return res.status(400).json({ error: 'Empresa não cadastrada.' });
 
-    const queueType = await QueueType.findByPk(req.body.queueType_id);
+    const queueType = await QueueType.findByPk(req.body.queue_type_id);
     if (!queueType)
       return res.status(400).json({ error: 'Tipo de Fila não cadastrada.' });
     if (queueType.company_id !== companyId)
@@ -78,7 +78,7 @@ class QueueController {
       positions: 0,
       wait: 0,
       company_id: companyId,
-      queue_type_id: req.body.queueType_id
+      queue_type_id: req.body.queue_type_id
     });
 
     return res.json({ id, description });
